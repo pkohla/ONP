@@ -1,64 +1,45 @@
 package utils;
 
+import utils.data.CalculationData;
+import utils.operators.OperatorFactory;
+
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 
 public class ONPCalculator {
 
     private String expression;
     private LinkedList<Integer> buffer = new LinkedList<>();
-    private List<String> operatorsList = List.of("+", "-", "x", "/");
-    private List<String> expressionElements;
+    private List<String> operatorsListThatNeedsTwoNumeral = List.of("+", "-", "x", "/");
+    private List<String> operatorsListThatNeedsOneNumeral = List.of("!");
 
-    public ONPCalculator() {
-    }
+    private List<String> operatorsList = new LinkedList<>();
 
     public ONPCalculator(String expression) {
         this.expression = expression;
-        convertExpression();
-    }
-
-    public List<String> getExpressionElements() {
-        return expressionElements;
-    }
-
-    private void convertExpression() {
-        expressionElements = List.of(expression.split(" "));
+        operatorsList.addAll(operatorsListThatNeedsTwoNumeral);
+        operatorsList.addAll(operatorsListThatNeedsOneNumeral);
     }
 
     public void solve() {
-        for (String elem: expressionElements) {
-            if (!operatorsList.contains(elem)) {
-                buffer.add(Integer.parseInt(elem));
-            } else {
-                int b = buffer.pollLast();
-                int a = buffer.pollLast();
-
-                calculate(elem, b, a);
-            }
-        }
+        Stream.of(expression.split(" "))
+                .forEach(elem -> {
+                    if (!operatorsList.contains(elem)) {
+                        buffer.add(Integer.parseInt(elem));
+                    } else {
+                        OperatorFactory operatorFactory = new OperatorFactory();
+                        buffer.add(operatorFactory.getOperator(elem).getResult(prepareData(elem)));
+                    }
+                });
     }
 
-    protected void calculate(String elem, int b, int a) {
-        switch (elem) {
-            case "+" : {
-              buffer.add(a + b);
-              break;
-            }
-            case "-" : {
-                buffer.add(a - b);
-                break;
-            }
-            case "x" : {
-                buffer.add(a * b);
-                break;
-            }
-            case "/" : {
-                buffer.add(a / b);
-                break;
-            }
+    private CalculationData prepareData(String elem) {
+        if (operatorsListThatNeedsOneNumeral.contains(elem)) {
+            return new CalculationData(buffer.pollLast(), null);
         }
+        return new CalculationData(buffer.pollLast(), buffer.pollLast());
     }
 
     public int getResult() {

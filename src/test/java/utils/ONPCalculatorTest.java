@@ -8,12 +8,6 @@ import static org.hamcrest.Matchers.*;
 class ONPCalculatorTest {
 
     @Test
-    public void testIfHeapWorksOk() {
-        ONPCalculator onpCalculator = new ONPCalculator("12 2 +");
-        assertThat(onpCalculator.getExpressionElements().size(), is(3));
-    }
-
-    @Test
     public void testCaseOne() {
         ONPCalculator onpCalculator = new ONPCalculator("12 2 3 4 x 10 5 / + x +");
         onpCalculator.solve();
@@ -29,33 +23,36 @@ class ONPCalculatorTest {
 
     @Test
     public void checkIfAddingWorks() {
-        ONPCalculator onpCalculator = new ONPCalculator();
-
-        onpCalculator.calculate("+", 2,4);
+        ONPCalculator onpCalculator = new ONPCalculator("2 4 +");
+        onpCalculator.solve();
         assertThat(onpCalculator.getResult(),  is(6));
     }
 
     @Test
     public void checkIfSubtractWorks() {
-        ONPCalculator onpCalculator = new ONPCalculator();
-
-        onpCalculator.calculate("-", 2,4);
+        ONPCalculator onpCalculator = new ONPCalculator("4 2 -");
+        onpCalculator.solve();
         assertThat(onpCalculator.getResult(),  is(2));
     }
 
     @Test
     public void checkIfMultiplyWorks() {
-        ONPCalculator onpCalculator = new ONPCalculator();
-
-        onpCalculator.calculate("x", 2,4);
+        ONPCalculator onpCalculator = new ONPCalculator("2 4 x");
+        onpCalculator.solve();
         assertThat(onpCalculator.getResult(),  is(8));
     }
 
     @Test
     public void checkIfDivideWorks() {
-        ONPCalculator onpCalculator = new ONPCalculator();
-
-        onpCalculator.calculate("/", 2,4);
+        ONPCalculator onpCalculator = new ONPCalculator("4 2 /");
+        onpCalculator.solve();
         assertThat(onpCalculator.getResult(),  is(2));
+    }
+
+    @Test
+    public void checkIfFactorialWorks() {
+        ONPCalculator onpCalculator = new ONPCalculator("4 !");
+        onpCalculator.solve();
+        assertThat(onpCalculator.getResult(),  is(24));
     }
 }
